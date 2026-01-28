@@ -300,7 +300,7 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen void-bg flex flex-col p-4 md:p-8 pt-40 md:pt-36 max-w-5xl mx-auto overflow-hidden relative">
+    <div className="min-h-screen void-bg flex flex-col p-4 md:p-8 pt-52 md:pt-44 max-w-5xl mx-auto overflow-hidden relative">
       <StatsPanel state={state} onReset={resetGame} />
 
       {showDebug && (
