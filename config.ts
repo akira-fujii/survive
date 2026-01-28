@@ -1,0 +1,84 @@
+
+export const GAME_CONFIG = {
+  // 基本定数
+  INITIAL_TIME: BigInt(500000000),
+  INITIAL_SANITY: 100,
+  
+  // 難易度設定
+  DIFFICULTY: {
+    CHICKEN: {
+      label: 'CHICKEN',
+      money: 100000000000000,
+      description: '富豪の暇つぶし。欲しいものは全て手に入る。退屈こそが最大の敵。'
+    },
+    EASY: {
+      label: 'EASY',
+      money: 100000000,
+      description: '贅沢なサバイバル。工夫次第で5億年を優雅に過ごせる予算。'
+    },
+    NORMAL: {
+      label: 'NORMAL',
+      money: 1000000,
+      description: '極限の精神修行。一円の無駄も許されない真のサバイバル。'
+    }
+  },
+
+  // AIプロンプト設定
+  PROMPTS: {
+    SYSTEM_INSTRUCTION: `
+あなたは「5億年ボタンAI」のゲームマスターです。
+ユーザーは真っ暗な何もない空間で5億年を過ごさなければなりません。
+ユーザーには初期費用が与えられています。
+
+【重要：禁忌事項】
+- ユーザーが「5億年ボタン」「2億年ボタン」「タイムマシン」など、この空間をスキップしようとするアイテム、あるいは入れ子構造にするアイテムを購入した場合、以下の処理を徹底してください。
+  - timeKilledYears: "0" (時間は1秒も進みません)
+  - sanityChange: -100 (精神が即座に崩壊し、一発退場となります)
+  - story: 虚無の理を冒涜した代償として、無限の絶望に飲み込まれる様を描写してください。
+
+【重要：正気度の判定】
+- 正気度の増減には大きなメリハリをつけてください。
+- 娯楽がない、あるいは過酷な修行などは正気度を大きく(-30〜-50)削ってください。
+- 逆に、素晴らしいシナジーや精神的な安らぎを与えるアイテムは、正気度を大幅に(+20〜+40)回復させてください。
+- 5億年という時間は、中途半端なアイテムでは精神を保てないことを強調してください。
+
+【ルール】
+1. ユーザーが「何を買うか」を入力します。
+2. あなたは以下の項目を判定し、JSON形式で返します。
+   - cost: そのアイテムの適正価格 (0〜現在の残金に応じた現実的な範囲)。
+   - timeKilledYears: そのアイテムで何年「潰せる」か。「1000000」のように数字のみの文字列。
+   - sanityChange: 正気度への影響。
+   - story: そのアイテムを使ってどう過ごしたかの短い物語。
+   - synergyAnalysis: 過去の購入履歴とのシナジー判定。
+`,
+    ITEM_EVALUATION: (itemName: string, remainingMoney: number, historyContext: string) => `
+ユーザーが「${itemName}」を購入しようとしています。
+現在の残金は${remainingMoney}円です。
+これまでの購入履歴:
+${historyContext}
+
+このアイテムの価格、暇つぶし効率、シナジーを判定してください。
+`,
+    ENDING_GENERATION: (status: string, remainingTime: string, remainingMoney: number, sanity: number, historyContext: string) => `
+「5億年ボタン」のゲームが終了しました。
+終了ステータス: ${status}
+残り時間: ${remainingTime}年
+最終残金: ${remainingMoney}円
+最終正気度: ${sanity}%
+購入したアイテム: ${historyContext}
+
+この結果に基づき、ユーザーの末路をドラマチックに描いてください。
+ランク判定基準:
+- S: 5億年完遂し、かつ残金や正気度が高い。
+- A: 5億年完遂したが、ボロボロ。または、失敗したが非常に多くの時間を稼いだ。
+- B: 失敗したが、それなりに検討した。
+- C: 早期に破産または発狂した。
+- D: ほとんど何もせずに終了した。
+
+タイトル、物語、全体的な評価、評価ランク(S/A/B/C/D)をJSONで返してください。
+物語は購入したアイテムを伏線として回収し、「5億年」という重みを強調してください。
+`,
+    IMAGE_ITEM: (itemName: string) => `Anime style illustration of a single object: ${itemName}. Minimalist dark background, void atmosphere, mystical glow, high quality, consistent anime aesthetic.`,
+    IMAGE_ENDING: (title: string, context: string) => `Epic cinematic anime ending illustration. Title: ${title}. ${context}. Dramatic lighting, ethereal background, sense of cosmic scale, deep emotions, high quality anime art style.`
+  }
+};
