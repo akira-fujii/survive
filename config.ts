@@ -78,7 +78,7 @@ export const GAME_CONFIG = {
    - cost: そのアイテムの適正価格 (0〜現在の残金に応じた現実的な範囲)。
    - timeKilledYears: そのアイテムで何年「潰せる」か。「1000000」のように数字のみの文字列。購入履歴に応じてインフレさせること。
    - sanityChange: 正気度への影響。
-   - story: そのアイテムを使ってどう過ごしたかの短い物語。
+   - story: そのアイテムを使ってどう過ごしたかの短い物語。【重要】3個目以降の購入では、必ず過去のアイテムとのシナジーに言及すること（例：「以前買った○○と組み合わせて...」）。
    - synergyAnalysis: 過去の購入履歴とのシナジー判定。どのアイテムと相乗効果があったかを具体的に述べる。
 `,
     ITEM_EVALUATION: (itemName: string, remainingMoney: number, historyContext: string) => `
