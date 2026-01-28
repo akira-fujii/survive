@@ -21,7 +21,7 @@ const StatsPanel: React.FC<StatsPanelProps> = ({ state }) => {
   const initialMoney = GAME_CONFIG.DIFFICULTY[diffKey].money;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 bg-zinc-900/50 p-6 rounded-xl border border-zinc-800 shadow-2xl backdrop-blur-sm">
+    <div className="sticky top-0 z-50 grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 bg-zinc-900/95 p-6 rounded-xl border border-zinc-800 shadow-2xl backdrop-blur-md">
       <div className="flex flex-col">
         <span className="text-xs uppercase tracking-widest text-zinc-500 mb-1">残り時間</span>
         <div className="text-2xl md:text-3xl font-bold pixel-font text-white flex items-end gap-2">
