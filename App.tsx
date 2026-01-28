@@ -308,7 +308,7 @@ const App: React.FC = () => {
           </h1>
           <p className="text-zinc-600 uppercase tracking-widest text-[8px]">{state.difficulty} MODE ACTIVE</p>
         </div>
-        <button onClick={resetGame} className="text-zinc-600 hover:text-zinc-400 text-[10px] uppercase tracking-widest border border-zinc-800 px-3 py-1 rounded-full">Give Up</button>
+        <button onClick={resetGame} className="text-red-500 hover:text-red-400 hover:bg-red-500/10 text-[10px] uppercase tracking-widest border border-red-500/50 px-3 py-1 rounded-full transition-all">Give Up</button>
       </header>
 
       {showDebug && (
