@@ -300,7 +300,8 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen void-bg flex flex-col p-4 md:p-8 max-w-5xl mx-auto overflow-hidden relative">
+    <div className="min-h-screen void-bg flex flex-col p-4 md:p-8 pt-28 md:pt-24 max-w-5xl mx-auto overflow-hidden relative">
+      <StatsPanel state={state} />
       <header className="mb-8 text-center flex justify-between items-center">
         <div className="text-left">
           <h1 className="text-2xl md:text-4xl font-black pixel-font glow-text tracking-tighter italic">
@@ -327,8 +328,6 @@ const App: React.FC = () => {
           </div>
         </div>
       )}
-
-      <StatsPanel state={state} />
 
       <main className="flex-1 overflow-hidden flex flex-col gap-6">
         <div ref={scrollRef} className="flex-1 overflow-y-auto space-y-6 pr-2 custom-scrollbar scroll-smooth">
