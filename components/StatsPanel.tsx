@@ -5,9 +5,10 @@ import { GAME_CONFIG } from '../config';
 
 interface StatsPanelProps {
   state: GameState;
+  onReset: () => void;
 }
 
-const StatsPanel: React.FC<StatsPanelProps> = ({ state }) => {
+const StatsPanel: React.FC<StatsPanelProps> = ({ state, onReset }) => {
   const formatYears = (years: bigint) => {
     return years.toLocaleString();
   };
@@ -21,7 +22,24 @@ const StatsPanel: React.FC<StatsPanelProps> = ({ state }) => {
   const initialMoney = GAME_CONFIG.DIFFICULTY[diffKey].money;
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 grid grid-cols-1 md:grid-cols-3 gap-4 bg-zinc-900/95 p-4 md:px-8 border-b border-zinc-800 shadow-2xl backdrop-blur-md">
+    <div className="fixed top-0 left-0 right-0 z-50 bg-zinc-900/95 border-b border-zinc-800 shadow-2xl backdrop-blur-md">
+      {/* Header row */}
+      <div className="flex justify-between items-center px-4 md:px-8 py-2 border-b border-zinc-800/50">
+        <div className="flex items-center gap-3">
+          <h1 className="text-lg md:text-2xl font-black pixel-font glow-text tracking-tighter italic">
+            ５億年ボタン
+          </h1>
+          <span className="text-zinc-600 uppercase tracking-widest text-[8px] hidden md:inline">{state.difficulty} MODE</span>
+        </div>
+        <button
+          onClick={onReset}
+          className="text-red-500 hover:text-red-400 hover:bg-red-500/10 text-[10px] uppercase tracking-widest border border-red-500/50 px-3 py-1 rounded-full transition-all"
+        >
+          Give Up
+        </button>
+      </div>
+      {/* Stats row */}
+      <div className="grid grid-cols-3 gap-4 p-3 md:px-8 md:py-4">
       <div className="flex flex-col">
         <span className="text-xs uppercase tracking-widest text-zinc-500 mb-1">残り時間</span>
         <div className="text-2xl md:text-3xl font-bold pixel-font text-white flex items-end gap-2">
@@ -59,6 +77,7 @@ const StatsPanel: React.FC<StatsPanelProps> = ({ state }) => {
             style={{ width: `${state.sanity}%` }}
           />
         </div>
+      </div>
       </div>
     </div>
   );

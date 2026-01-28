@@ -300,17 +300,8 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen void-bg flex flex-col p-4 md:p-8 pt-28 md:pt-24 max-w-5xl mx-auto overflow-hidden relative">
-      <StatsPanel state={state} />
-      <header className="mb-8 text-center flex justify-between items-center">
-        <div className="text-left">
-          <h1 className="text-2xl md:text-4xl font-black pixel-font glow-text tracking-tighter italic">
-            ５億年ボタン
-          </h1>
-          <p className="text-zinc-600 uppercase tracking-widest text-[8px]">{state.difficulty} MODE ACTIVE</p>
-        </div>
-        <button onClick={resetGame} className="text-red-500 hover:text-red-400 hover:bg-red-500/10 text-[10px] uppercase tracking-widest border border-red-500/50 px-3 py-1 rounded-full transition-all">Give Up</button>
-      </header>
+    <div className="min-h-screen void-bg flex flex-col p-4 md:p-8 pt-32 md:pt-28 max-w-5xl mx-auto overflow-hidden relative">
+      <StatsPanel state={state} onReset={resetGame} />
 
       {showDebug && (
         <div className="fixed top-4 left-4 z-[200] bg-black/95 border-2 border-green-500 p-4 rounded-lg font-mono text-[10px] text-green-400 max-w-sm shadow-[0_0_30px_rgba(0,255,0,0.2)] max-h-[80vh] overflow-auto">
