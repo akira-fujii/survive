@@ -1,18 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { GameState, GameHistoryItem } from './types';
-import { evaluateItem, generateItemImage, generateEnding, generateEndingImage } from './services/geminiService';
+import { evaluateItem, generateItemImage, generateEnding, generateEndingImage, getApiKey, setApiKey, hasApiKey } from './services/geminiService';
 import StatsPanel from './components/StatsPanel';
 import { GAME_CONFIG } from './config';
 
-// 外部から提供されるAPIキー選択用のグローバル関数への型定義
-declare global {
-  interface Window {
-    aistudio?: {
-      hasSelectedApiKey: () => Promise<boolean>;
-      openSelectKey: () => Promise<void>;
-    };
-  }
-}
 
 const App: React.FC = () => {
   const [state, setState] = useState<GameState>({
@@ -31,17 +22,13 @@ const App: React.FC = () => {
   const [loadingText, setLoadingText] = useState('');
   const [showDebug, setShowDebug] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [apiKeyInput, setApiKeyInput] = useState('');
   const [hasSelectedKey, setHasSelectedKey] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const checkKey = async () => {
-      if (window.aistudio?.hasSelectedApiKey) {
-        const selected = await window.aistudio.hasSelectedApiKey();
-        setHasSelectedKey(selected);
-      }
-    };
-    checkKey();
+    setHasSelectedKey(hasApiKey());
+    setApiKeyInput(getApiKey());
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.shiftKey && e.key === 'D') {
@@ -61,12 +48,18 @@ const App: React.FC = () => {
     }
   }, [state.history]);
 
-  const handleOpenSelectKey = async () => {
-    if (window.aistudio?.openSelectKey) {
-      await window.aistudio.openSelectKey();
-      // レースコンディション対策として、トリガー後は成功とみなす
+  const handleSaveApiKey = () => {
+    const trimmed = apiKeyInput.trim();
+    if (trimmed) {
+      setApiKey(trimmed);
       setHasSelectedKey(true);
     }
+  };
+
+  const handleClearApiKey = () => {
+    setApiKey('');
+    setApiKeyInput('');
+    setHasSelectedKey(false);
   };
 
   const startGame = (difficultyKey: keyof typeof GAME_CONFIG.DIFFICULTY) => {
@@ -261,15 +254,42 @@ const App: React.FC = () => {
         <div className="p-6 border border-zinc-800 rounded-3xl bg-zinc-900/30 max-w-lg w-full mb-8">
           <h3 className="text-zinc-400 text-xs font-black uppercase tracking-widest mb-4">Gemini API Key Configuration</h3>
           <div className="flex flex-col items-center gap-4">
-            <button 
-              onClick={handleOpenSelectKey}
-              className={`w-full py-4 px-6 rounded-2xl font-black uppercase tracking-widest transition-all ${hasSelectedKey ? 'bg-green-600/20 text-green-400 border border-green-600/50' : 'bg-indigo-600 text-white hover:bg-indigo-500 shadow-lg shadow-indigo-900/40'}`}
-            >
-              {hasSelectedKey ? '✓ API Key Selected' : 'Set Your Personal API Key'}
-            </button>
+            {hasSelectedKey ? (
+              <div className="w-full space-y-3">
+                <div className="flex items-center gap-2 py-3 px-4 rounded-2xl bg-green-600/20 border border-green-600/50">
+                  <span className="text-green-400 font-black">API Key Set</span>
+                  <span className="text-green-600 text-xs flex-1 truncate font-mono">
+                    {apiKeyInput.slice(0, 8)}...{apiKeyInput.slice(-4)}
+                  </span>
+                </div>
+                <button
+                  onClick={handleClearApiKey}
+                  className="w-full py-2 px-4 rounded-xl text-red-400 border border-red-600/30 hover:bg-red-600/10 text-xs uppercase tracking-widest transition-all"
+                >
+                  Clear API Key
+                </button>
+              </div>
+            ) : (
+              <div className="w-full space-y-3">
+                <input
+                  type="password"
+                  value={apiKeyInput}
+                  onChange={(e) => setApiKeyInput(e.target.value)}
+                  placeholder="Enter your Gemini API Key"
+                  className="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+                />
+                <button
+                  onClick={handleSaveApiKey}
+                  disabled={!apiKeyInput.trim()}
+                  className="w-full py-3 px-6 rounded-2xl font-black uppercase tracking-widest transition-all bg-indigo-600 text-white hover:bg-indigo-500 shadow-lg shadow-indigo-900/40 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Save API Key
+                </button>
+              </div>
+            )}
             <p className="text-[10px] text-zinc-500 leading-relaxed">
-              自身のAPIキーを使用することで、より安定した動作が可能です。<br />
-              <a href="https://ai.google.dev/gemini-api/docs/billing" target="_blank" className="underline hover:text-indigo-400">Paid GCP project</a> から発行されたキーを推奨します。
+              APIキーはブラウザのlocalStorageに保存されます。<br />
+              <a href="https://aistudio.google.com/apikey" target="_blank" className="underline hover:text-indigo-400">Google AI Studio</a> でAPIキーを取得できます。
             </p>
           </div>
         </div>

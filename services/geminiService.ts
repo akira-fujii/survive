@@ -3,6 +3,20 @@ import { GoogleGenAI, Type } from "@google/genai";
 import { AIResult, GameHistoryItem } from "../types";
 import { GAME_CONFIG } from "../config";
 
+const API_KEY_STORAGE_KEY = "gemini_api_key";
+
+export function getApiKey(): string {
+  return localStorage.getItem(API_KEY_STORAGE_KEY) || "";
+}
+
+export function setApiKey(key: string): void {
+  localStorage.setItem(API_KEY_STORAGE_KEY, key);
+}
+
+export function hasApiKey(): boolean {
+  return !!getApiKey();
+}
+
 async function callWithRetry<T>(
   fn: () => Promise<T>,
   retries = 3,
@@ -26,7 +40,7 @@ export async function evaluateItem(
   history: GameHistoryItem[],
   remainingMoney: number
 ): Promise<AIResult> {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey: getApiKey() });
   const historyContext = history
     .map((h) => `- ${h.itemName} (コスト:${h.cost}円, 経過:${h.timeKilled.toString()}年)`)
     .join("\n");
@@ -66,7 +80,7 @@ export async function generateEnding(
   remainingMoney: number,
   sanity: number
 ): Promise<{ title: string; story: string; evaluation: string, scoreGrade: string }> {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey: getApiKey() });
   const historyContext = history.map((h) => h.itemName).join(", ");
   const prompt = GAME_CONFIG.PROMPTS.ENDING_GENERATION(
     status, 
@@ -101,7 +115,7 @@ export async function generateEnding(
 }
 
 export async function generateImage(promptText: string): Promise<string> {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey: getApiKey() });
   const response = await callWithRetry(() => 
     ai.models.generateContent({
       model: "gemini-2.5-flash-image",
