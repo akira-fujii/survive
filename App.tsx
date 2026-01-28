@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { GameState, GameHistoryItem } from './types';
 import { evaluateItem, generateItemImage, generateEnding, generateEndingImage } from './services/geminiService';
@@ -6,14 +5,12 @@ import StatsPanel from './components/StatsPanel';
 import { GAME_CONFIG } from './config';
 
 // 外部から提供されるAPIキー選択用のグローバル関数への型定義
-// AIStudio型は環境によって既に定義されている可能性があるため、それを使用するように修正
 declare global {
-  interface AIStudio {
-    hasSelectedApiKey: () => Promise<boolean>;
-    openSelectKey: () => Promise<void>;
-  }
   interface Window {
-    aistudio: AIStudio;
+    aistudio?: {
+      hasSelectedApiKey: () => Promise<boolean>;
+      openSelectKey: () => Promise<void>;
+    };
   }
 }
 
